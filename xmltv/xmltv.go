@@ -9,15 +9,23 @@ import (
 )
 
 const (
-	XmltvDateFormat = "20060102150400 -0700"
-	XmltvEpisodeStd = "xmtv_ns"
-	GeneratorName   = "xmltv.sjurtf.net"
-	GeneratorUrl    = "https://xmltv.sjurtf.net/"
-	DocHeader       = `<?xml version="1.0" encoding="utf-8"?><!DOCTYPE tv SYSTEM "xmltv.dtd">`
+	XmltvDateFormat     = "20060102150400 -0700"
+	XmltvEpisodeStd     = "xmtv_ns"
+	GeneratorName       = "xmltv.sjurtf.net"
+	DocHeader           = `<?xml version="1.0" encoding="utf-8"?><!DOCTYPE tv SYSTEM "xmltv.dtd">`
+	defaultGeneratorUrl = "https://xmltv.sjurtf.net/"
 )
 
 var channelCache []tv2.Channel
 var channelGuideMap map[string]map[string][]tv2.Program
+var generatorUrl string
+
+func Init(url string) {
+	generatorUrl = defaultGeneratorUrl
+	if url != "" {
+		generatorUrl = url
+	}
+}
 
 func BuildCache(date time.Time, channel tv2.Channel) {
 	if channelGuideMap == nil {
@@ -51,10 +59,9 @@ func GetChannelList() ([]byte, error) {
 	var programs []Programme
 	for _, c := range channelCache {
 		channel := Channel{
-			Id:   xmlChannelIdMap[c.Id],
-			Name: c.Name,
-			//BaseUrl: GeneratorUrl,
-			BaseUrl: "http://host.docker.internal:8080/",
+			Id:      xmlChannelIdMap[c.Id],
+			Name:    c.Name,
+			BaseUrl: generatorUrl,
 		}
 		channels = append(channels, channel)
 	}
@@ -97,7 +104,7 @@ func getProgramsForChannel(channelId string, date time.Time) []Programme {
 func marshall(channels []Channel, programs []Programme) ([]byte, error) {
 	resp := Response{
 		GeneratorName: GeneratorName,
-		GeneratorUrl:  GeneratorUrl,
+		GeneratorUrl:  generatorUrl,
 		ChannelList:   channels,
 		ProgrammeList: programs,
 	}

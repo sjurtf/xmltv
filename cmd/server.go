@@ -10,12 +10,16 @@ import (
 	"xmltv-exporter/xmltv"
 )
 
-func ServeEpg() {
+func ServeEpg(port string) {
 
 	http.HandleFunc("/channels-norway.xml", ChannelListHandler)
 	http.HandleFunc("/", ChannelHandler)
 
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	if port == "" {
+		port = "8080"
+	}
+
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatal(err)
 	}
 }
