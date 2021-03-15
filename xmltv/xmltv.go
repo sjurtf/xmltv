@@ -79,7 +79,17 @@ func getProgramsForChannel(channelId string, date time.Time) []Programme {
 	var programs []Programme
 	for _, p := range guide {
 
-		ep := EpisodeNum{
+		titles := CommonElement{
+			Lang:  "nb",
+			Value: p.Title,
+		}
+
+		subtitle := CommonElement{
+			Lang:  "nb",
+			Value: p.Title,
+		}
+
+		episode := EpisodeNum{
 			System:     XmltvEpisodeStd,
 			EpisodeNum: formatEpisode(p.Season, p.Episode, p.EpisodeTotal),
 		}
@@ -89,14 +99,19 @@ func getProgramsForChannel(channelId string, date time.Time) []Programme {
 			desc = p.SeriesSynopsis
 		}
 
+		description := CommonElement{
+			Lang:  "nb",
+			Value: desc,
+		}
+
 		programme := Programme{
-			Channel:     channelId,
-			Start:       formatTime(p.Start),
-			Stop:        formatTime(p.Stop),
-			Title:       p.Title,
-			SubTitle:    p.Title,
-			Description: desc,
-			EpisodeNum:  ep,
+			Channel:      channelId,
+			Start:        formatTime(p.Start),
+			Stop:         formatTime(p.Stop),
+			Titles:       []CommonElement{titles},
+			SubTitles:    []CommonElement{subtitle},
+			Descriptions: []CommonElement{description},
+			EpisodeNums:  []EpisodeNum{episode},
 		}
 		programs = append(programs, programme)
 	}

@@ -20,32 +20,31 @@ type Channel struct {
 }
 
 type Programme struct {
-	XMLName     xml.Name   `xml:"programme"`
-	Channel     string     `xml:"channel,attr"`
-	Start       string     `xml:"start,attr"`
-	Stop        string     `xml:"stop,attr"`
-	Title       string     `xml:"title"`
-	SubTitle    string     `xml:"sub-title,omitempty"`
-	Description string     `xml:"desc,omitempty"`
-	EpisodeNum  EpisodeNum `xml:"episode-num,omitempty"`
-	Credits     string     `xml:"credits,omitempty"`
-	Date        string     `xml:"date,omitempty"`
-	Categories  []Category `xml:"category,omitempty"`
-	Rating      []Rating   `xml:"rating,omitempty"`
+	XMLName      xml.Name        `xml:"programme"`
+	Channel      string          `xml:"channel,attr"`
+	Start        string          `xml:"start,attr"`
+	Stop         string          `xml:"stop,attr"`
+	Titles       []CommonElement `xml:"title"`
+	SubTitles    []CommonElement `xml:"sub-title,omitempty"`
+	Descriptions []CommonElement `xml:"desc,omitempty"`
+	Categories   []CommonElement `xml:"category,omitempty"`
+	EpisodeNums  []EpisodeNum    `xml:"episode-num,omitempty"`
+	Credits      string          `xml:"credits,omitempty"`
+	Date         string          `xml:"date,omitempty"`
+	Ratings      []Rating        `xml:"rating,omitempty"`
+}
+
+type CommonElement struct {
+	Lang  string `xml:"lang,attr,omitempty"`
+	Value string `xml:",chardata"`
 }
 
 type EpisodeNum struct {
-	XMLName    xml.Name `xml:"episode-num"`
-	System     string   `xml:"system,attr"`
-	EpisodeNum string   `xml:",chardata"`
+	System     string `xml:"system,attr"`
+	EpisodeNum string `xml:",chardata"`
 }
 
 type Rating struct {
-	System string `xml:"system,attr"`
 	Value  string `xml:"value"`
-}
-
-type Category struct {
-	Value string `xml:",chardata"`
-	Lang  string `xml:"lang,attr"`
+	System string `xml:"system,attr,omitempty"`
 }
