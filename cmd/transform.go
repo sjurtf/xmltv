@@ -7,19 +7,27 @@ import (
 	"xmltv-exporter/xmltv"
 )
 
-func MapEgp() {
-	today := time.Now()
-	futureOneWeek := time.Now().Add(time.Hour * 24 * 3)
+func RefreshWeek() {
+	days := 7
+	tomorrow := time.Now().Add(time.Hour * 24)
+	refresh(tomorrow, days)
+	log.Printf("Refreshed epg cache for next %d days", days)
+}
 
-	var t = today
-	for t.Before(futureOneWeek) {
+func RefreshToday() {
+	refresh(time.Now(), 1)
+	log.Println("Refreshed epg cache for today")
+}
+
+func refresh(start time.Time, days int) {
+	var t = start
+	end := time.Now().Add(time.Hour * time.Duration(24*days))
+
+	for t.Before(end) {
 		channels := tv2.FetchEpg(t)
-
 		for _, channel := range channels {
 			xmltv.BuildCache(t, channel)
 		}
-
 		t = t.Add(time.Hour * 24)
 	}
-	log.Println("Refreshed epg cache")
 }
