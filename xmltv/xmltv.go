@@ -86,13 +86,18 @@ func getProgramsForChannel(channelId string, date time.Time) []Programme {
 			EpisodeNum: formatEpisode(p.Season, p.Episode, p.EpisodeTotal),
 		}
 
+		desc := p.EpisodeSynopsis
+		if desc == "" {
+			desc = p.SeriesSynopsis
+		}
+
 		programme := Programme{
 			Channel:     channelId,
 			Start:       formatTime(p.Start),
 			Stop:        formatTime(p.Stop),
 			Title:       p.Title,
 			SubTitle:    p.Title,
-			Description: p.EpisodeSynopsis,
+			Description: desc,
 			EpisodeNum:  ep,
 		}
 		programs = append(programs, programme)
