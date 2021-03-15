@@ -147,7 +147,7 @@ so Season 7, Episode 5, Part 1 of 2 would appear as:
 <episode-num system="xmltv_ns">6.4.0/2</episode-num>
 */
 func formatEpisode(s, e, t int) string {
-	return fmt.Sprintf("%d.%d/%d", s, e, t)
+	return fmt.Sprintf("%d.%d/%d", s-1, e-1, t)
 }
 
 func formatTime(date time.Time) string {
