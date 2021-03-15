@@ -8,6 +8,7 @@ var xmlChannelIdMap = map[int]string{
 	1153: "sport1.tv2.no",
 	1154: "sport2.tv2.no",
 	1148: "sportpremium.tv2.no",
+	1149: "sportpremium2.tv2.no",
 	1000: "nrk1.nrk.no",
 	1001: "nrk2.nrk.no",
 	1112: "nrk3.nrk.no",
