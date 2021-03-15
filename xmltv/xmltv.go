@@ -101,7 +101,7 @@ func getProgramsForChannel(channelId string, date time.Time) []Programme {
 		programs = append(programs, programme)
 	}
 
-	log.Printf("fetched guide for channelId %s on %s. Num programs %d", channelId, dateKey, len(guide))
+	log.Printf("fetched guide: %s - channelId %s. Num programs %d", dateKey, channelId, len(guide))
 	return programs
 }
 
