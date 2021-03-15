@@ -16,7 +16,7 @@ const (
 	defaultGeneratorUrl = "https://xmltv.sjurtf.net/"
 )
 
-var channelCache []tv2.Channel
+var channelCache map[int]tv2.Channel
 var channelGuideMap map[string]map[string][]tv2.Program
 var generatorUrl string
 
@@ -25,6 +25,9 @@ func Init(url string) {
 	if url != "" {
 		generatorUrl = url
 	}
+
+	channelCache = make(map[int]tv2.Channel)
+	channelGuideMap = make(map[string]map[string][]tv2.Program)
 }
 
 func BuildCache(date time.Time, channel tv2.Channel) {
@@ -42,12 +45,7 @@ func BuildCache(date time.Time, channel tv2.Channel) {
 		log.Printf("channel %s with id %d is not mapped", channel.Name, channel.Id)
 	}
 	channelGuideMap[dateKey][xmlChannelId] = channel.Programs
-	//log.Printf("updated programs on %s for channel %s ", dateKey, channel.Name)
-}
-
-func UpdateAvailableChannels(channels []tv2.Channel) {
-	channelCache = channels
-	log.Println("Updated available channels")
+	channelCache[channel.Id] = channel
 }
 
 func GetChannelList() ([]byte, error) {
@@ -66,6 +64,7 @@ func GetChannelList() ([]byte, error) {
 		channels = append(channels, channel)
 	}
 
+	log.Printf("fetched available channels. Num channels %d", len(channels))
 	return marshall(channels, programs)
 }
 
@@ -76,7 +75,6 @@ func GetSchedule(channelId string, date time.Time) ([]byte, error) {
 func getProgramsForChannel(channelId string, date time.Time) []Programme {
 	dateKey := formatCacheKey(date)
 	guide := channelGuideMap[dateKey][channelId]
-	log.Printf("fetched guide for channelId %s on %s. Num programs %d", channelId, dateKey, len(guide))
 
 	var programs []Programme
 	for _, p := range guide {
@@ -103,6 +101,7 @@ func getProgramsForChannel(channelId string, date time.Time) []Programme {
 		programs = append(programs, programme)
 	}
 
+	log.Printf("fetched guide for channelId %s on %s. Num programs %d", channelId, dateKey, len(guide))
 	return programs
 }
 

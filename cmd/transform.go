@@ -13,16 +13,13 @@ func MapEgp() {
 
 	var t = today
 	for t.Before(futureOneWeek) {
-		channels := tv2.FetchEpg(today)
-		xmltv.UpdateAvailableChannels(channels)
+		channels := tv2.FetchEpg(t)
 
-		// TODO make this more efficient
 		for _, channel := range channels {
 			xmltv.BuildCache(t, channel)
 		}
 
 		t = t.Add(time.Hour * 24)
-		log.Printf("date: %s", t)
 	}
-	log.Println("Epg cache refreshed")
+	log.Println("Refreshed epg cache")
 }
