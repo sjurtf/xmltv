@@ -13,10 +13,10 @@ type Response struct {
 }
 
 type Channel struct {
-	XMLName xml.Name `xml:"channel"`
-	Id      string   `xml:"id,attr"`
-	Name    string   `xml:"display-name"`
-	BaseUrl string   `xml:"base-url"`
+	XMLName xml.Name      `xml:"channel"`
+	Id      string        `xml:"id,attr"`
+	Name    CommonElement `xml:"display-name"`
+	BaseUrl string        `xml:"base-url"`
 }
 
 type Programme struct {

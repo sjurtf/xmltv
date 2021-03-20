@@ -12,7 +12,7 @@ const (
 	XmltvDateFormat     = "20060102150400 -0700"
 	XmltvEpisodeStd     = "xmtv_ns"
 	GeneratorName       = "xmltv.sjurtf.net"
-	DocHeader           = `<?xml version="1.0" encoding="utf-8"?><!DOCTYPE tv SYSTEM "xmltv.dtd">`
+	DocHeader           = "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE tv SYSTEM \"xmltv.dtd\">\n"
 	defaultGeneratorUrl = "https://xmltv.sjurtf.net/"
 )
 
@@ -56,9 +56,15 @@ func GetChannelList() ([]byte, error) {
 	var channels []Channel
 	var programs []Programme
 	for _, c := range channelCache {
+
+		name := CommonElement{
+			Lang:  "en",
+			Value: c.Name,
+		}
+
 		channel := Channel{
 			Id:      xmlChannelIdMap[c.Id],
-			Name:    c.Name,
+			Name:    name,
 			BaseUrl: generatorUrl,
 		}
 		channels = append(channels, channel)
@@ -78,24 +84,48 @@ func getProgramsForChannel(channelId string, date time.Time) []Programme {
 
 	var programs []Programme
 	for _, p := range guide {
+		cat := "series"
+		if p.IsMovie {
+			cat = "movie"
+		}
+
+		category := CommonElement{
+			Lang:  "en",
+			Value: cat,
+		}
 
 		titles := CommonElement{
 			Lang:  "nb",
 			Value: p.Title,
 		}
 
-		subtitle := CommonElement{
-			Lang:  "nb",
-			Value: p.Title,
+		var subtitles []CommonElement
+		var episodeNums []EpisodeNum
+		if p.Season != 0 || p.Episode != 0 {
+			episode := EpisodeNum{
+				System:     XmltvEpisodeStd,
+				EpisodeNum: formatEpisode(p.Season, p.Episode, p.EpisodeTotal),
+			}
+			if !p.IsMovie {
+				episodeNums = []EpisodeNum{episode}
+				subtitles = []CommonElement{{
+					Lang:  "nb",
+					Value: formatEpisodeHuman(p.Season, p.Episode),
+				},
+				}
+			}
+
+		} else {
+			episodeNums = nil
+			subtitles = nil
 		}
 
-		episode := EpisodeNum{
-			System:     XmltvEpisodeStd,
-			EpisodeNum: formatEpisode(p.Season, p.Episode, p.EpisodeTotal),
-		}
-
-		desc := p.EpisodeSynopsis
-		if desc == "" {
+		var desc string
+		if p.EpisodeSynopsis == "" && p.SeriesSynopsis == "" {
+			desc = "Beskrivelse ikke tilgjengelig"
+		} else if p.EpisodeSynopsis != "" {
+			desc = p.EpisodeSynopsis
+		} else {
 			desc = p.SeriesSynopsis
 		}
 
@@ -109,9 +139,10 @@ func getProgramsForChannel(channelId string, date time.Time) []Programme {
 			Start:        formatTime(p.Start),
 			Stop:         formatTime(p.Stop),
 			Titles:       []CommonElement{titles},
-			SubTitles:    []CommonElement{subtitle},
+			Categories:   []CommonElement{category},
 			Descriptions: []CommonElement{description},
-			EpisodeNums:  []EpisodeNum{episode},
+			SubTitles:    subtitles,
+			EpisodeNums:  episodeNums,
 		}
 		programs = append(programs, programme)
 	}
@@ -128,11 +159,10 @@ func marshall(channels []Channel, programs []Programme) ([]byte, error) {
 		ProgrammeList: programs,
 	}
 
-	bytes, err := xml.Marshal(resp)
+	bytes, err := xml.MarshalIndent(resp, "", "  ")
 	if err != nil {
 		log.Fatalln("unable to marshal")
 	}
-
 	return append([]byte(DocHeader), bytes...), nil
 }
 
@@ -147,7 +177,11 @@ so Season 7, Episode 5, Part 1 of 2 would appear as:
 <episode-num system="xmltv_ns">6.4.0/2</episode-num>
 */
 func formatEpisode(s, e, t int) string {
-	return fmt.Sprintf("%d.%d/%d", s-1, e-1, t)
+	return fmt.Sprintf("%d.%d.0/1", s-1, e-1)
+}
+
+func formatEpisodeHuman(s, e int) string {
+	return fmt.Sprintf("S%dE%d", s, e)
 }
 
 func formatTime(date time.Time) string {
