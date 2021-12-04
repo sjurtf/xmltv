@@ -1,4 +1,4 @@
-FROM golang:1.16.2 as builder
+FROM golang:1.17.4 as builder
 
 ENV GO111MODULE=on \
     CGO_ENABLED=0 \
@@ -8,7 +8,7 @@ ENV GO111MODULE=on \
 WORKDIR /app
 
 COPY go.mod .
-#COPY go.sum .
+COPY go.sum .
 RUN go mod download
 
 COPY . /app
