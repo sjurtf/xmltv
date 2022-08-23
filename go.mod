@@ -2,7 +2,7 @@ module xmltv-exporter
 
 go 1.17
 
-require github.com/go-co-op/gocron v1.16.2
+require github.com/go-co-op/gocron v1.16.3
 
 require (
 	github.com/robfig/cron/v3 v3.0.1 // indirect
