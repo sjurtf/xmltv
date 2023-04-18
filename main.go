@@ -1,11 +1,14 @@
 package main
 
 import (
-	"github.com/go-co-op/gocron"
 	"os"
 	"time"
-	"xmltv-exporter/cmd"
-	"xmltv-exporter/xmltv"
+
+	"xmltv/internal/xmltv"
+
+	"github.com/go-co-op/gocron"
+
+	"xmltv/cmd"
 )
 
 func main() {
@@ -18,5 +21,6 @@ func main() {
 	cmd.RefreshToday()
 	cmd.RefreshWeek()
 
-	cmd.ServeEpg(os.Getenv("XMLTV_PORT"))
+	server := cmd.Server{}
+	server.Start()
 }

@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"log"
 	"time"
-	"xmltv-exporter/tv2"
+
+	"xmltv/internal/tv2"
 )
 
 const (
@@ -16,9 +17,13 @@ const (
 	defaultGeneratorUrl = "https://xmltv.sjurtf.net/"
 )
 
-var channelCache map[int]tv2.Channel
-var channelGuideMap map[string]map[string][]tv2.Program
-var generatorUrl string
+type Producer struct{}
+
+var (
+	channelCache    map[int]tv2.Channel
+	channelGuideMap map[string]map[string][]tv2.Program
+	generatorUrl    string
+)
 
 func Init(url string) {
 	generatorUrl = defaultGeneratorUrl
@@ -40,7 +45,7 @@ func BuildCache(date time.Time, channel tv2.Channel) {
 		channelGuideMap[dateKey] = make(map[string][]tv2.Program)
 	}
 
-	xmlChannelId := xmlChannelIdMap[channel.Id]
+	xmlChannelId := tv2.XmlChannelIdMap[channel.Id]
 	if xmlChannelId == "" {
 		log.Printf("channel %s with id %d is not mapped", channel.Name, channel.Id)
 	}
@@ -63,14 +68,14 @@ func GetChannelList() ([]byte, error) {
 		}
 
 		channel := Channel{
-			Id:      xmlChannelIdMap[c.Id],
+			Id:      tv2.XmlChannelIdMap[c.Id],
 			Name:    name,
 			BaseUrl: generatorUrl,
 		}
 		channels = append(channels, channel)
 	}
 
-	log.Printf("fetched available channels. Num channels %d", len(channels))
+	log.Printf("Fetched %d channels from channel cahce", len(channels))
 	return marshall(channels, programs)
 }
 
@@ -108,10 +113,11 @@ func getProgramsForChannel(channelId string, date time.Time) []Programme {
 			}
 			if !p.IsMovie {
 				episodeNums = []EpisodeNum{episode}
-				subtitles = []CommonElement{{
-					Lang:  "nb",
-					Value: formatEpisodeHuman(p.Season, p.Episode),
-				},
+				subtitles = []CommonElement{
+					{
+						Lang:  "nb",
+						Value: formatEpisodeHuman(p.Season, p.Episode),
+					},
 				}
 			}
 

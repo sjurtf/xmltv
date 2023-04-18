@@ -1,6 +1,6 @@
-package xmltv
+package tv2
 
-var xmlChannelIdMap = map[int]string{
+var XmlChannelIdMap = map[int]string{
 	1005: "tv2.no",
 	1152: "zebra.tv2.no",
 	1969: "livsstil.tv2.no",

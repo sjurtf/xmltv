@@ -1,2 +1,2 @@
 #!/bin/sh
-docker build . -t xmltv-exporter:development
+docker build . -t xmltv:development

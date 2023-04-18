@@ -3,8 +3,9 @@ package cmd
 import (
 	"log"
 	"time"
-	"xmltv-exporter/tv2"
-	"xmltv-exporter/xmltv"
+
+	"xmltv/internal/tv2"
+	"xmltv/internal/xmltv"
 )
 
 func RefreshWeek() {
@@ -20,7 +21,7 @@ func RefreshToday() {
 }
 
 func refresh(start time.Time, days int) {
-	var t = start
+	t := start
 	end := time.Now().Add(time.Hour * time.Duration(24*days))
 
 	for t.Before(end) {
