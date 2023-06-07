@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/go-chi/chi/v5 v5.0.8
-	github.com/go-co-op/gocron v1.28.0
+	github.com/go-co-op/gocron v1.28.2
 	golang.org/x/vuln v0.1.0
 	honnef.co/go/tools v0.4.3
 	mvdan.cc/gofumpt v0.5.0
