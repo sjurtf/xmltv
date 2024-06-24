@@ -3,7 +3,7 @@ module xmltv
 go 1.20
 
 require (
-	github.com/go-chi/chi/v5 v5.0.12
+	github.com/go-chi/chi/v5 v5.0.14
 	github.com/go-co-op/gocron v1.37.0
 	golang.org/x/vuln v1.1.2
 	honnef.co/go/tools v0.4.7
